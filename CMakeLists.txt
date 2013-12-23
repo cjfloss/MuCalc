@@ -50,7 +50,7 @@ install(TARGETS mu_calculator RUNTIME DESTINATION bin)
 install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/Mu.desktop DESTINATION share/applications)
 
 #icons for later
-#install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/application_mu.svg DESTINATION share/icons/hicolor/48x48/apps)
+install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/application_mu.svg DESTINATION share/icons/hicolor/48x48/apps)
 
 
 

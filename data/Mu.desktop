@@ -4,6 +4,6 @@ Name=Mu
 Comment=An advanced graphing calculator
 GenericName=Mu Graphing Calculator
 Exec=mu_calculato
-Icon=application-default-icon
+Icon=application-mu
 Terminal=false
 Categories=GNOME;GTK;Utility;

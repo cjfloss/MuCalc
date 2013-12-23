@@ -12,6 +12,7 @@ namespace Mu.Widgets {
 	private int width;
 	private int height;
 	private int type;
+	private double scale;
 	bool isPressed = false;
 
 	string[] functions = new string[0];
@@ -23,33 +24,36 @@ namespace Mu.Widgets {
     	width = get_allocated_width ();
        	height = get_allocated_height ();
 		this.type = type;
+		if (scale == 0)
+		{
+			scale = 10;
+		}
 
 	}
 
 	// convert coordinates to the actual x
-	public int to_graph_x(int x)
+	public double to_x(double x)
 	{
-		return (x + width/2);
+		return ((x + width/2)*scale);
 	}
 
 	// convert coordinates to actual y
-	public int to_graph_y(int y)
+	public double to_y(double y)
 	{
-		return (y + height/2);
+		return ((y + height/2)*scale);
 	}
 
 	// convert to coordinate x
-	public int to_coord_x(int x)
+	public double to_coord_x(double x)
 	{
-		return (x - width/2);
+		return ((x - width/2)/scale);
 	}
 
 	// convert to coordinate y
-	public int to_coord_y(int y)
+	public double to_coord_y(double y)
 	{
-		return (y - height/2);
+		return ((height/2 - y)/scale);
 	}
-
 	
   	public override bool draw (Cairo.Context cr) {
   		width = get_allocated_width ();
@@ -71,10 +75,6 @@ namespace Mu.Widgets {
 	        cr.move_to(xc, 0);
 	        cr.line_to(xc, height);
 	        cr.stroke();
-	        stdout.printf(xc.to_string() + " ");
-	        stdout.printf(yc.to_string() + " ");
-	        stdout.printf(width.to_string() + " ");
-	        stdout.printf(height.to_string() + "\n");
   		}
 
   		for (int i = 0; i < functions.length; i++) {
@@ -82,7 +82,7 @@ namespace Mu.Widgets {
   			int result;
   			while (fx < width)
   			{
-
+  				
   			}
   		}
   		
@@ -93,11 +93,8 @@ namespace Mu.Widgets {
     public override bool button_press_event (Gdk.EventButton e) {
         // ...
         isPressed = true;
-        stdout.printf("clicked ");
-        stdout.printf(((int)e.x).to_string());
-        stdout.printf(",");
-        stdout.printf(((int)e.y).to_string());
-        stdout.printf("\n");
+        stdout.printf("clicked : ");
+        stdout.printf("(" + to_coord_x(e.x).to_string() + ", " + to_coord_y(e.y).to_string() + ") \n");
         return false;
     }
 

@@ -18,7 +18,7 @@ namespace Mu{
         program_name = "Mu";
         exec_name = "mu_calculator";
         app_years = "2013";
-        app_icon = "application-default-icon";
+        app_icon = "application-mu";
         app_launcher = "Mu.desktop";
         application_id = "com.antwankakki.mu";
 
