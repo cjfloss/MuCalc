@@ -35,6 +35,7 @@ include(ValaPrecompile)
 vala_precompile(VALA_C
 	src/main.vala
 	src/main_window.vala
+	src/Widgets/graph.vala
 PACKAGES
 	granite
 OPTIONS

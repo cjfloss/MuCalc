@@ -2,17 +2,27 @@ using Granite
 using Gtk;
 
 namespace Mu{
-    public class Mu : Granite.Application {
+    public class Canvas : Gtk.DrawingArea {
 
-        //Variables
-        Window window;
-        Gtk.DrawingArea graph;
-        
-        public Mu(){
-            this.set_flags (ApplicationFlags.HANDLES_OPEN);
-            Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = true;
+        int[] x-axis;
+        int[] y-axis;
 
+
+        public Canvas(){
+            x-axis[0] = 0;
+            x-axis[1] = ((int)(get_allocated_height()/2));
+            x-axis[2] = get_allocated_width();
+            x-axis[3] = ((int)(get_allocated_height()/2));
         }
+
+            /* Widget is asked to draw itself */
+      public override bool draw (Cairo.Context cr) {
+            cr.set_source_rgb (0, 0, 0);
+            cr.set_line_width (4);
+            cr.set_tolerance (0.1);
+
+             return false;
+            }
 
         public static int main (string [] args){
             Gtk.init (ref args);

@@ -1,18 +1,17 @@
 using Granite;
 using Gtk;
-
+using Mu.Widgets;
 namespace Mu{
     public class Main : Granite.Application {
 
         //Variables
         Window window;
-        DrawingArea graph;
+        Graph graph;
         Toolbar toolbar;
 
         public Main(){
             this.set_flags (ApplicationFlags.HANDLES_OPEN);
             Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = true;
-
         }
 
     construct {
@@ -52,24 +51,32 @@ namespace Mu{
             this.window = new Window ();
             this.window.set_default_size (640, 480);
             this.window.set_application (this);
+            this.window.set_title("Mu Caclulator");
             //The uppermost layout (Toolbar + Rest)
             var mainBox = new Box (Orientation.VERTICAL, 0);
-            var innerBox = new Box (Orientation.HORIZONTAL, 0);
             var menu = new Gtk.Menu ();
             var appmenu   = this.create_appmenu (menu);
-            toolbar = new Toolbar();
-            mainBox.pack_start(toolbar, false);
+            toolbar   = new Toolbar ();
+            var backward    = new ToolButton (new Image.from_stock (Stock.GO_BACK, IconSize.BUTTON), "");
+            var forward   = new ToolButton (new Image.from_stock (Stock.GO_FORWARD, IconSize.BUTTON), "");
+            var expander      = new ToolItem ();
+            var export      = new ToolButton (new Image.from_icon_name ("document-export", IconSize.BUTTON), "");
+            graph = new Graph(Graph.TWO_DIMENSIONAL);
+
+            expander.set_expand (true);
+
+            toolbar.insert (backward, 0);
+            toolbar.insert (forward, 1);
+            toolbar.insert (expander, 2);
+            toolbar.insert (export, 3);
+            toolbar.insert (appmenu, 4);
             toolbar.get_style_context ().add_class ("primary-toolbar");
-            toolbar.insert(appmenu, 0);
-            mainBox.add(toolbar);
-            mainBox.add(innerBox);
-            //Inner Layout (Graph and equations)
-            var graph = new DrawingArea();
-            innerBox.add(graph);
-
-
-            this.window.add (mainBox);
-            this.window.show_all ();
+        
+            mainBox.pack_start (toolbar, false);
+            mainBox.pack_start(graph, true);
+            window.add (mainBox);
+            mainBox.show_all();
+            window.show_all ();
         }
 
     }
