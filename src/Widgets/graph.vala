@@ -54,9 +54,10 @@ namespace Mu.Widgets {
 	{
 		return ((height/2 - y)/scale);
 	}
-	
-  	public override bool draw (Cairo.Context cr) {
-  		width = get_allocated_width ();
+
+	// draw the actual graph
+	private void draw_graph(Cairo.Context cr){
+		width = get_allocated_width ();
        	height = get_allocated_height ();
   		cr.set_line_width(1);
   		cr.set_source_rgb(1, 1, 1);
@@ -76,16 +77,27 @@ namespace Mu.Widgets {
 	        cr.line_to(xc, height);
 	        cr.stroke();
   		}
+	}
 
+	// graph the functions entered
+	public void graph_functions(Cairo.Context cr)
+	{
   		for (int i = 0; i < functions.length; i++) {
   			int fx = 0;
   			int result;
   			while (fx < width)
   			{
-  				
+
   			}
   		}
-  		
+	}
+
+
+	// the actual widget needs o be drawn
+  	public override bool draw (Cairo.Context cr) {
+  		draw_graph(cr);
+  		graph_functions(cr);
+
        	return false;
     }
 
@@ -136,7 +148,4 @@ namespace Mu.Widgets {
     	//functions
     }
 }
-
-
-
 }
