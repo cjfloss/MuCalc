@@ -1,12 +1,13 @@
 using Granite;
 using Gtk;
-using Mu.Widgets;
+using Mu.Math;
+
 namespace Mu{
     public class Main : Granite.Application {
 
         //Variables
         Window window;
-        Graph graph;
+        2DGraph graph;
         Toolbar toolbar;
 
         public Main(){
@@ -59,19 +60,39 @@ namespace Mu{
             toolbar   = new Toolbar ();
             var backward    = new ToolButton (new Image.from_stock (Stock.GO_BACK, IconSize.BUTTON), "");
             var forward   = new ToolButton (new Image.from_stock (Stock.GO_FORWARD, IconSize.BUTTON), "");
+            var zoom_in = new ToolButton (new Image.from_stock(Stock.ZOOM_IN, IconSize.BUTTON), "");
+            var zoom_out = new ToolButton (new Image.from_stock(Stock.ZOOM_OUT, IconSize.BUTTON), "");            
+            var text_box      = new ToolItem ();
             var expander      = new ToolItem ();
             var export      = new ToolButton (new Image.from_icon_name ("document-export", IconSize.BUTTON), "");
-            graph = new Graph(Graph.TWO_DIMENSIONAL);
-
+            graph = new 2DGraph(2DGraph.CARTESIAN);
             expander.set_expand (true);
 
             toolbar.insert (backward, 0);
             toolbar.insert (forward, 1);
-            toolbar.insert (expander, 2);
-            toolbar.insert (export, 3);
-            toolbar.insert (appmenu, 4);
+            toolbar.insert (zoom_in, 2);
+            toolbar.insert (zoom_out, 3);
+            toolbar.insert (expander, 4);
+            toolbar.insert (export, 5);
+            toolbar.insert (appmenu, 6);
             toolbar.get_style_context ().add_class ("primary-toolbar");
-        
+
+            zoom_in.clicked.connect ( () => {
+                this.graph.scale_x = this.graph.scale_x + 10;
+                this.graph.scale_y = this.graph.scale_y + 10;
+                mainBox.show_all();
+            });
+            
+            zoom_out.clicked.connect ( () => {
+                this.graph.scale_x = this.graph.scale_x - 10;
+                this.graph.scale_y = this.graph.scale_y - 10;
+                
+                mainBox.show_all();
+            });
+
+            graph.add_function("y=x^2+x+1");
+            graph.add_function("y=x+2");
+            graph.add_function("y=x^3");            
             mainBox.pack_start (toolbar, false);
             mainBox.pack_start(graph, true);
             window.add (mainBox);
