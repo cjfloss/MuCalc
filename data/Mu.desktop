@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Mu
-Comment=An advanced graphing calculator
-GenericName=Mu Graphing Calculator
-Exec=mu_calculato
-Icon=application-mu
-Terminal=false
-Categories=GNOME;GTK;Utility;

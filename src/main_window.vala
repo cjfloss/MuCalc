@@ -1,32 +1,42 @@
 using Granite;
 using Gtk;
-using Mu.Math;
-
-namespace Mu{
+using Pi.Math;
+using Granite.Widgets;
+namespace Pi{
     public class Main : Granite.Application {
 
         //Variables
         Window window;
         2DGraph graph;
         Toolbar toolbar;
-
+        public const bool GRAPH_MODE = true;
+        public const bool SOLVE_MODE = false;
+        public bool mode;
+        ToolButton switch_btn;
+        ToolButton zoom_out;
+        ToolButton zoom_in;
+        Box mainBox = new Box (Orientation.VERTICAL, 0);
+        Box verticalBox = new Gtk.Box (Orientation.VERTICAL, 0);  
+        ThinPaned main_hpaned = new ThinPaned ();
+        Welcome welcome_scr;
         public Main(){
             this.set_flags (ApplicationFlags.HANDLES_OPEN);
             Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = true;
+
         }
 
     construct {
-        program_name = "Mu";
-        exec_name = "mu_calculator";
+        program_name = "Pi";
+        exec_name = "pi_calculator";
         app_years = "2013";
-        app_icon = "application-mu";
-        app_launcher = "Mu.desktop";
-        application_id = "com.antwankakki.mu";
+        app_icon = "application-pi-calc";
+        app_launcher = "Pi.desktop";
+        application_id = "com.antwankakki.pi";
 
-        main_url = "https://code.launchpad.net/hello_world";
-        bug_url = "https://bugs.launchpad.net/hello_world";
-        help_url = "https://code.launchpad.net/hello_world";
-        translate_url = "https://translations.launchpad.net/hello_world";
+        main_url = "https://code.launchpad.net/pi-calc";
+        bug_url = "https://bugs.launchpad.net/pi-calc";
+        help_url = "https://code.launchpad.net/pi-calc";
+        translate_url = "https://translations.launchpad.net/pi-calc";
 
         about_authors = {"Antwan Gaggi <antwankakki@gmail.com>"};
         about_documenters = {"Antwan Gaggi <antwankakki@gmail.com>"};
@@ -39,8 +49,8 @@ namespace Mu{
 
         public static int main (string [] args){
             Gtk.init (ref args);
-            var mu = new Mu.Main ();
-            return mu.run (args);
+            var pi = new Pi.Main ();
+            return pi.run (args);
         }
 
         public override void activate () {
@@ -50,30 +60,59 @@ namespace Mu{
 
         public void build_and_run () {
             this.window = new Window ();
-            this.window.set_default_size (640, 480);
+            this.window.set_default_size (800, 600);
+            this.window.set_position(WindowPosition.CENTER);
             this.window.set_application (this);
-            this.window.set_title("Mu Caclulator");
+            this.window.set_title("π Caclulator");
+
             //The uppermost layout (Toolbar + Rest)
-            var mainBox = new Box (Orientation.VERTICAL, 0);
             var menu = new Gtk.Menu ();
             var appmenu   = this.create_appmenu (menu);
             toolbar   = new Toolbar ();
-            var backward    = new ToolButton (new Image.from_stock (Stock.GO_BACK, IconSize.BUTTON), "");
-            var forward   = new ToolButton (new Image.from_stock (Stock.GO_FORWARD, IconSize.BUTTON), "");
-            var zoom_in = new ToolButton (new Image.from_stock(Stock.ZOOM_IN, IconSize.BUTTON), "");
-            var zoom_out = new ToolButton (new Image.from_stock(Stock.ZOOM_OUT, IconSize.BUTTON), "");            
-            var text_box      = new ToolItem ();
-            var expander      = new ToolItem ();
-            var export      = new ToolButton (new Image.from_icon_name ("document-export", IconSize.BUTTON), "");
+            var backward    = new ToolButton (new Image.from_icon_name ("go-previous", IconSize.BUTTON), "");
+            var forward   = new ToolButton (new Image.from_icon_name ("go-next", IconSize.BUTTON), "");
+            zoom_in = new ToolButton (new Image.from_icon_name("zoom-in", IconSize.BUTTON), "");
+            zoom_out = new ToolButton (new Image.from_icon_name("zoom-out", IconSize.BUTTON), "");            
+            var text_box = new ToolItem ();
+            var expander = new ToolItem ();
             graph = new 2DGraph(2DGraph.CARTESIAN);
             expander.set_expand (true);
 
+            //Welcome Screen
+            Welcome welcome_scr = new Welcome("Welcome to π", "choose your next step...");
+            welcome_scr.append_with_image(new Image.from_icon_name("document-page-setup", IconSize.BUTTON),
+                "Graph 2D", "Graph 2D cartesian, polar, or hyperbolic equations.");
+            welcome_scr.append_with_image(new Image.from_icon_name("document-page-setup", IconSize.BUTTON),
+                "Graph 3D", "Graph 3D cartesian, polar, or hyperbolic equations.");
+            welcome_scr.append_with_image(new Image.from_icon_name("format-justify-fill", IconSize.BUTTON),
+                "Solve", "Solve, Integrate, Derieve, and do much more with π.");
+            welcome_scr.append_with_image(new Image.from_icon_name("preferences-system", IconSize.BUTTON),
+                "Settings", "Access π's Settings.");
+
+            welcome_scr.activated.connect ((i) => {
+                    if (i == 0){
+                        mainBox.remove(welcome_scr);
+                        mainBox.pack_start(graph, true);
+                        mainBox.show_all();
+                    }
+                    else if (i == 1) {
+                        
+                    }
+                    else if (i == 2) {
+                        
+                    }     
+                });
+
+            //Insert to toolbar
             toolbar.insert (backward, 0);
             toolbar.insert (forward, 1);
             toolbar.insert (zoom_in, 2);
-            toolbar.insert (zoom_out, 3);
+            toolbar.insert (zoom_out, 3) ;           
             toolbar.insert (expander, 4);
-            toolbar.insert (export, 5);
+
+               // deal with gui later
+                switch_btn = new ToolButton (new Image.from_icon_name("format-justify-fill", IconSize.BUTTON), "");
+            toolbar.insert (switch_btn, 5);
             toolbar.insert (appmenu, 6);
             toolbar.get_style_context ().add_class ("primary-toolbar");
 
@@ -90,15 +129,36 @@ namespace Mu{
                 mainBox.show_all();
             });
 
-            graph.add_function("y=x^2+x+1");
-            graph.add_function("y=x+2");
-            graph.add_function("y=x^3");            
+
+            switch_btn.clicked.connect ( () => {
+                this.switch_mode();
+            });            
+
+
+            zoom_out.hide();
+            zoom_in.hide();
+            switch_btn.hide();
+            graph.add_function("y=x+x");    
+            graph.add_function("y=x+2");               
             mainBox.pack_start (toolbar, false);
-            mainBox.pack_start(graph, true);
+            mainBox.pack_start(welcome_scr, true);
             window.add (mainBox);
             mainBox.show_all();
             window.show_all ();
+            switch_mode(); 
+            zoom_out.hide();
+            zoom_in.hide();
+            switch_btn.hide();                      
         }
 
+        private void switch_mode () {
+            if(mode != GRAPH_MODE){
+                switch_btn = new ToolButton (new Image.from_icon_name("format-justify-fill", IconSize.BUTTON), "");
+            }
+            else {
+                switch_btn = new ToolButton (new Image.from_icon_name("document-page-setup", IconSize.BUTTON), "");                              
+            }     
+            mode = !mode;                    
+        }
     }
 }
