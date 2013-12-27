@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Pi
+Comment=An advanced graphing calculator
+GenericName=Pi Graphing Calculator
+Exec=pi_calculator
+Icon=application-pi-calc
+Terminal=false
+Categories=GNOME;GTK;Utility;s
