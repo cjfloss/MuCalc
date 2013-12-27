@@ -85,7 +85,7 @@ namespace Pi{
             welcome_scr.append_with_image(new Image.from_icon_name("document-page-setup", IconSize.BUTTON),
                 "Graph 3D", "Graph 3D cartesian, polar, or hyperbolic equations.");
             welcome_scr.append_with_image(new Image.from_icon_name("format-justify-fill", IconSize.BUTTON),
-                "Solve", "Solve, Integrate, Derieve, and do much more with π.");
+                "Solve", "Solve, Integrate, Derive, and do much more with π.");
             welcome_scr.append_with_image(new Image.from_icon_name("preferences-system", IconSize.BUTTON),
                 "Settings", "Access π's Settings.");
 
