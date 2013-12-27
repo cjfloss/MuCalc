@@ -63,7 +63,7 @@ namespace Pi{
             this.window.set_default_size (800, 600);
             this.window.set_position(WindowPosition.CENTER);
             this.window.set_application (this);
-            this.window.set_title("π Caclulator");
+            this.window.set_title("π Calculator");
 
             //The uppermost layout (Toolbar + Rest)
             var menu = new Gtk.Menu ();
