@@ -4,7 +4,7 @@ namespace Pi.Math {
         string original_expression;
         private Term[] terms;
         private double values;
-        private Expression[] expressions;
+        private double power;
         public double coefficient;
         public bool has_a_function = false;
         private string _function;
@@ -27,26 +27,44 @@ namespace Pi.Math {
         {
             string parsed = original_expression;
             Gee.ArrayList<Term> terms = new Gee.ArrayList<Term>();
-            Gee.ArrayList<Expression> expressions = new Gee.ArrayList<Expression>();
 
             //y=x^2+2xy+x+3-sin(x);
             for (int i = 0; i < original_expression.char_count(); i++) {
                 int ii = 0; // second index
-                if (original_expression.get_char(i) != '+' || original_expression.get_char(i) != '-') {
-                    while (original_expression.get_char(i+ii) != '-'|| i+ii > original_expression.char_count()) {
-                     ii++;   
+                int depth = 0;
+                unichar current = original_expression.get_char(i+ii);
+                unichar sign = original_expression.get_char(i); // the sign
+                string content; // the contents inside
+                int back; // how far back have we gone for sign
+
+                //lets grab the string content for our term
+                while ((current != '+' || current != '-') && depth == 0)
+                {
+                    if(current == '(')
+                    {
+                     depth++; // if we went inside a new bracket, increase the depth
+                    } else if (current == ')')
+                    {
+                     depth--; // if we hit a closed bracket, decrease the depth
                     }
+                    ii++; // either way, we've progressed so increase the second index'
+                    current = original_expression.get_char(i+ii);
                 }
-                string content = original_expression.substring(i+1, i+ii-1);
-                if (content.contains("(")) {
-                    // to do check sub expressions or terms 
+
+                //lets get a sign
+                while (sign != '+' || sign != '-')
+                {
+                 back++; // increase amount to go back
+                 sign = original_expression.get_char(i-back) // get the char before
                 }
-                else if (content.char_count() > 1 && 1 == 1) { // change 1 == 1, its place holder
-                    //check if it has a coefficient
-                    // add term
-                }else{
-                    terms.add(new Term(content, original_expression.get_char(i)));
+                if (original_expression.get_char(i) == '+' || original_expression.get_char(i) == '-')
+                {
+                  content = original_expression.substring(i+1, i+ii-1);
                 }
+                else {
+                  content = original_expression.substring(i, i+ii-1);
+                }
+
                 i = i + ii;
                 ii = 0;
             }
@@ -54,11 +72,13 @@ namespace Pi.Math {
 
         private bool hit_stop(int i, int ii)
         {
-            return original_expression.get_char(i+ii) != '+' || 
+            return original_expression.get_char(i+ii) != '+' ||
                    original_expression.get_char(i+ii) != '-'||
                    i+ii > original_expression.char_count();
         }
 
+
+///tobedeleted
         public void parse_terms()
         {
             string f = original_expression;
@@ -123,7 +143,7 @@ namespace Pi.Math {
             /*
             find out if we have +, -, or spaces
             if we do, eliminate those, we should be left with
-            only numbers and letters, try to parse it as a 
+            only numbers and letters, try to parse it as a
             double, if possible, then we dont have an expression
             we have an operation
             */
@@ -138,7 +158,7 @@ namespace Pi.Math {
             double v = double.parse(content);
             if (v == 0) {
                 result = true;
-            }                                  
+            }
             return result;
         }
 
@@ -148,7 +168,7 @@ namespace Pi.Math {
             /*
             find out if we have +, -, or spaces
             if we do, eliminate those, we should be left with
-            only numbers and letters, try to parse it as a 
+            only numbers and letters, try to parse it as a
             double, if possible, then we dont have an expression
             we have an operation
             */
@@ -161,14 +181,14 @@ namespace Pi.Math {
 
             for (int i = 0;i < content.char_count(); i++) {
                 if (content.get_char(i).to_string() in CharacterSet.a_2_z || content.get_char(i).to_string() in CharacterSet.A_2_Z) {
-                 content.replace(content.get_char(i).to_string(), ""); // remove all letters                    
+                 content.replace(content.get_char(i).to_string(), ""); // remove all letters
                 }
             }
 
             double v = double.parse(content);
             if (v == 0) {
                 result = true;
-            }                                  
+            }
             return result;
         }
 
