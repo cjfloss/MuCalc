@@ -9,27 +9,36 @@ namespace Pi.Math {
         public Expression[] exprs;
         public double coefficient;
         public string original_term;
+        public string string_term;
         private string _function;
         public bool has_a_function = false;
 
-        public Term(string term, unichar si = '+', double coefficient = 1) {
+
+        //TODO Parsing, Coefficients...
+        //
+        public Term(string term, unichar si = '+') {
             original_term = term;
             sign = si;
+            string_term = "";
+            //if our term is just a number
+            if(Math.is_valid_number(term))
+            {
+
+            }
+            else{
+                coefficient = Math.extract_coefficient(out string_term, true);
+                parse_term();
+            }
+
         }
 
-        public Term.with_function(string term, string func, char si = '+', double c = 1)
-        {
-            _function = func;
-            has_a_function = true;
-            this(term, si, c);
-        }
 
         public double evaluate_when(unichar vari, double value)
         {
             double result = 0;
             foreach (Variable v in vars) {
                 if (vari == v.letter) {
-                    
+
                 }
                 result = result + v.evaluate_when(value);
             }
@@ -47,7 +56,7 @@ namespace Pi.Math {
         public static bool is_term(string content)
         {
             if (content.contains("+ ") || content.contains("- ") || content.contains(" ")) {
-                return false;                
+                return false;
             }
             else{
                 return true;
@@ -76,12 +85,12 @@ namespace Pi.Math {
                         }
                         ii++;
                     }
-                    contents = original_term.substring(i,ii);                    
+                    contents = original_term.substring(i,ii);
                     if (Expression.is_expression(contents)) {
                         expressions.add(new Expression(contents));
                     }
                     else {
-                        terms.add(new Term(contents));                        
+                        terms.add(new Term(contents));
                     }
                 }
 

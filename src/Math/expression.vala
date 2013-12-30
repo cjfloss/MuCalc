@@ -1,7 +1,7 @@
 
 namespace Pi.Math {
     public class Expression{
-        string original_expression;
+        string string_expression;
         private Term[] terms;
         private double values;
         private double power;
@@ -9,14 +9,14 @@ namespace Pi.Math {
         public bool has_a_function = false;
         private string _function;
 
-        public Expression(string exp, double c = 1) {
-            original_expression = exp;
-            coefficient = 1;
-            parse_expression();
+        public Expression(string exp) {
+
+            
+            parse_expression(); //parse it
         }
 
         public Expression.with_function(string exp, string f) {
-            original_expression = exp;
+            string_expression = exp;
             has_a_function = true;
             _function = f;
             parse_expression();
@@ -25,15 +25,15 @@ namespace Pi.Math {
 
         private void parse_expression()
         {
-            string parsed = original_expression;
+            string parsed = string_expression;
             Gee.ArrayList<Term> terms = new Gee.ArrayList<Term>();
 
             //y=x^2+2xy+x+3-sin(x);
-            for (int i = 0; i < original_expression.char_count(); i++) {
+            for (int i = 0; i < string_expression.char_count(); i++) {
                 int ii = 0; // second index
                 int depth = 0;
-                unichar current = original_expression.get_char(i+ii);
-                unichar sign = original_expression.get_char(i); // the sign
+                unichar current = string_expression.get_char(i+ii);
+                unichar sign = string_expression.get_char(i); // the sign
                 string content; // the contents inside
                 int back; // how far back have we gone for sign
 
@@ -48,22 +48,25 @@ namespace Pi.Math {
                      depth--; // if we hit a closed bracket, decrease the depth
                     }
                     ii++; // either way, we've progressed so increase the second index'
-                    current = original_expression.get_char(i+ii);
+                    current = string_expression.get_char(i+ii);
                 }
 
                 //lets get a sign
+                back = 0;
                 while (sign != '+' || sign != '-')
                 {
                  back++; // increase amount to go back
-                 sign = original_expression.get_char(i-back) // get the char before
+                 sign = string_expression.get_char(i-back); // get the char before
                 }
-                if (original_expression.get_char(i) == '+' || original_expression.get_char(i) == '-')
+                if (string_expression.get_char(i) == '+' || string_expression.get_char(i) == '-')
                 {
-                  content = original_expression.substring(i+1, i+ii-1);
+                  content = string_expression.substring(i+1, i+ii-1);
                 }
                 else {
-                  content = original_expression.substring(i, i+ii-1);
+                  content = string_expression.substring(i, i+ii-1);
                 }
+
+                terms.add(new Term(content, sign));
 
                 i = i + ii;
                 ii = 0;
@@ -72,63 +75,16 @@ namespace Pi.Math {
 
         private bool hit_stop(int i, int ii)
         {
-            return original_expression.get_char(i+ii) != '+' ||
-                   original_expression.get_char(i+ii) != '-'||
-                   i+ii > original_expression.char_count();
+            return string_expression.get_char(i+ii) != '+' ||
+                   string_expression.get_char(i+ii) != '-'||
+                   i+ii > string_expression.char_count();
         }
-
-
-///tobedeleted
-        public void parse_terms()
-        {
-            string f = original_expression;
-            int var_index = 0;
-            for (int i = 0; i < f.char_count(); i++) {
-                if (f.get_char(i).to_string() in GLib.CharacterSet.a_2_z || f.get_char(i).to_string() in GLib.CharacterSet.A_2_Z)
-                {
-                    char sind = '+'; // sign
-                    string pind = "1"; // power
-
-                    if (f.get_char(i-1) == '-') // check if the variable is negative
-                    {
-                        sind = '-';
-                    }
-                    if (f.get_char(i+1) == '^') {
-                        if (f.get_char(i+2) == '(') {
-                            string contents = "";
-                            int ii = 1;
-                            while(f.get_char(i+ii) != ')')
-                            {
-                                contents = contents + f.get_char(i+ii).to_string();
-                                ii++;
-                            }
-                            pind = contents;
-                        }
-                        else {
-                            pind = f.get_char(i+2).to_string();
-                        }
-                    }
-                    try {
-                        Variable v = new Variable.with_letter(sind, f.get_char(i), pind);
-                        //list.add(v);
-                        }
-                    catch (VariableError e) {
-                        stdout.printf("variable error");
-                    }
-                }
-            }
-        }
-
-
 
         public double evaluate_when(unichar v, double value)
         {
             double result = 0;
             foreach (Term t in terms) {
                 result = result + t.evaluate_when(v, value);
-            }
-            foreach (Expression expr in expressions) {
-                result = result + expr.evaluate_when(v, value);
             }
 
             if (has_a_function) {

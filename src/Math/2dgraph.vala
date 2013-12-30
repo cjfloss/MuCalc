@@ -1,5 +1,5 @@
 using Gtk;
-namespace Pi.Math { 
+namespace Pi.Math {
 
     public class 2DGraph : Gtk.DrawingArea {
         //The main variables and constants
@@ -49,7 +49,7 @@ namespace Pi.Math {
         public double to_coord_y(double y)
         {
             return ((height/2 + y)/scale_y);
-        }        
+        }
 
         // draw the actual graph
         private void draw_graph(Cairo.Context cr){
@@ -92,8 +92,8 @@ namespace Pi.Math {
             cr.line_to(xc, height);
             cr.stroke();
             graph_all_functions(cr);
-               cr.move_to(0 , yc);        
-            cr.set_font_size(8);                         
+               cr.move_to(0 , yc);
+            cr.set_font_size(8);
         }
 
         // graph the functions entered
@@ -120,16 +120,16 @@ namespace Pi.Math {
         public double scale_x{
             get {return width/screen_scale_x;}
             set {screen_scale_x = width/value;}
-        }        
+        }
 
         public double scale_y{
             get {return height/screen_scale_y;}
             set {screen_scale_y = height/value;}
-        }        
+        }
 
         public double scale{
             set {screen_scale_x = width/value; screen_scale_y = height/value;}
-        }        
+        }
 
 
         /* Mouse button got pressed over widget */
@@ -154,9 +154,9 @@ namespace Pi.Math {
             stdout.printf(((int) to_coord_x(e.x)).to_string());
             stdout.printf(",");
             stdout.printf(((int)to_coord_y(e.y)).to_string());
-            stdout.printf("\n");            
+            stdout.printf("\n");
             return false;
-        }   
+        }
 
         /* Mouse pointer moved over widget */
         public override bool motion_notify_event (Gdk.EventMotion e) {
@@ -169,12 +169,12 @@ namespace Pi.Math {
                 stdout.printf(",");
                 stdout.printf(((int)e.y).to_string());
                 stdout.printf("\n");
-                return false;    
+                return false;
             }
             else {
                 //its not dragging
 
-                return false;    
+                return false;
             }
         }
 
