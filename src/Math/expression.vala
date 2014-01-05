@@ -17,7 +17,10 @@ namespace Pi.Math {
             string_expression = original_expression;
             stdout.printf("--new expression \"" + string_expression + "\" created \n");
             coefficient = Math.extract_num_coefficient(string_expression);
-            string_expression = string_expression.replace(coefficient.to_string(), "");
+	    if (coefficient!=1)
+            {
+		string_expression = Math.replace_first(string_expression,coefficient.to_string(), "");
+	    }
             if (string_expression.get_char(0) == '(')
             {
                 string_expression = string_expression.substring(1, string_expression.last_index_of_char(')') - 1);
@@ -104,8 +107,9 @@ namespace Pi.Math {
             return result*coefficient;
         }
 
-        public static bool is_numeric_expression(string content)
+        public static bool is_numeric_expression(string parse)
         {
+	    string content = parse;
             bool result = false; // its not by default
             /*
             find out if we have +, -, or spaces
@@ -116,10 +120,11 @@ namespace Pi.Math {
             */
 
             content.replace(" ", ""); // remove all spaces
-
+	    
             foreach (string s in Math.symbols) {
-                content.replace(s, ""); // remove all math symbols
+               content = content.replace(s, ""); // remove all math symbols
             }
+	    stdout.printf("checking numeric expression \""+ content + "\" .............. is "+ Math.is_valid_number(content).to_string() + "\n");
             return Math.is_valid_number(content);
         }
 

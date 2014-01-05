@@ -134,8 +134,7 @@ namespace Pi{
                 this.switch_mode();
             });
 
-            graph.add_function("y=3+1");
-	    graph.add_function("y=3"); 
+            graph.add_function("y=x^(2)"); 
             zoom_out.hide();
             zoom_in.hide();
             switch_btn.hide();

@@ -1,4 +1,3 @@
-
 namespace Pi.Math {
 
 
@@ -12,6 +11,17 @@ namespace Pi.Math {
     * @return [String array of mathematical function symbols]
     */
     public const string[] functions = {"sin", "SIN", "Sin"};
+
+
+	public string replace_first(string text, string search, string replace)
+	{
+	  int pos = text.index_of(search);
+	  if (pos < 0)
+	  {
+	    return text;
+	  }
+	  return text.substring(0, pos) + replace + text.substring(pos + search.char_count());
+	}
 
 
     /**
@@ -90,16 +100,17 @@ namespace Pi.Math {
     {
         
 	stdout.printf("\x1b[35m" + "extracting a coefficient from string \"\x1b[33m" + s + "\x1b[35m\" \n");
-        if(is_valid_number(s))
-        {
-          stdout.printf("--extracted \"\x1b[33m1\x1b[35m\" \x1b[0m\n ");
-	  return 1; // if we are passed a number, the coefficient will be one, dont parse anything
-        }
+       	
 	if(Expression.is_numeric_expression(s))
 	{
 	 return 1;
 	}
 
+	 if(is_valid_number(s))
+        {
+          stdout.printf("--extracted \"\x1b[33m1\x1b[35m\" \x1b[0m\n ");
+	  return 1; // if we are passed a number, the coefficient will be one, dont parse anything
+        }
 	//get coefficients if they exist
         double c = 1.0;
         int i = 0; // index
