@@ -16,7 +16,7 @@ namespace Pi{
         ToolButton zoom_out;
         ToolButton zoom_in;
         Box mainBox = new Box (Orientation.VERTICAL, 0);
-        Box verticalBox = new Gtk.Box (Orientation.VERTICAL, 0);  
+        Box verticalBox = new Gtk.Box (Orientation.VERTICAL, 0);
         ThinPaned main_hpaned = new ThinPaned ();
         Welcome welcome_scr;
         public Main(){
@@ -33,10 +33,10 @@ namespace Pi{
         app_launcher = "Pi.desktop";
         application_id = "com.antwankakki.pi";
 
-        main_url = "https://code.launchpad.net/pi-calc";
-        bug_url = "https://bugs.launchpad.net/pi-calc";
-        help_url = "https://code.launchpad.net/pi-calc";
-        translate_url = "https://translations.launchpad.net/pi-calc";
+        main_url = "https://code.launchpad.net/mu-calc";
+        bug_url = "https://bugs.launchpad.net/mu-calc";
+        help_url = "https://code.launchpad.net/mu-calc";
+        translate_url = "https://translations.launchpad.net/mu-calc";
 
         about_authors = {"Antwan Gaggi <antwankakki@gmail.com>"};
         about_documenters = {"Antwan Gaggi <antwankakki@gmail.com>"};
@@ -72,7 +72,7 @@ namespace Pi{
             var backward    = new ToolButton (new Image.from_icon_name ("go-previous", IconSize.BUTTON), "");
             var forward   = new ToolButton (new Image.from_icon_name ("go-next", IconSize.BUTTON), "");
             zoom_in = new ToolButton (new Image.from_icon_name("zoom-in", IconSize.BUTTON), "");
-            zoom_out = new ToolButton (new Image.from_icon_name("zoom-out", IconSize.BUTTON), "");            
+            zoom_out = new ToolButton (new Image.from_icon_name("zoom-out", IconSize.BUTTON), "");
             var text_box = new ToolItem ();
             var expander = new ToolItem ();
             graph = new 2DGraph(2DGraph.CARTESIAN);
@@ -96,18 +96,18 @@ namespace Pi{
                         mainBox.show_all();
                     }
                     else if (i == 1) {
-                        
+
                     }
                     else if (i == 2) {
-                        
-                    }     
+
+                    }
                 });
 
             //Insert to toolbar
             toolbar.insert (backward, 0);
             toolbar.insert (forward, 1);
             toolbar.insert (zoom_in, 2);
-            toolbar.insert (zoom_out, 3) ;           
+            toolbar.insert (zoom_out, 3) ;
             toolbar.insert (expander, 4);
 
                // deal with gui later
@@ -121,34 +121,33 @@ namespace Pi{
                 this.graph.scale_y = this.graph.scale_y + 10;
                 mainBox.show_all();
             });
-            
+
             zoom_out.clicked.connect ( () => {
                 this.graph.scale_x = this.graph.scale_x - 10;
                 this.graph.scale_y = this.graph.scale_y - 10;
-                
+
                 mainBox.show_all();
             });
 
 
             switch_btn.clicked.connect ( () => {
                 this.switch_mode();
-            });            
+            });
 
-
+            graph.add_function("y=3+1");
+	    graph.add_function("y=3"); 
             zoom_out.hide();
             zoom_in.hide();
             switch_btn.hide();
-            graph.add_function("y=x+x");    
-            graph.add_function("y=x+2");               
             mainBox.pack_start (toolbar, false);
             mainBox.pack_start(welcome_scr, true);
             window.add (mainBox);
             mainBox.show_all();
             window.show_all ();
-            switch_mode(); 
+            switch_mode();
             zoom_out.hide();
             zoom_in.hide();
-            switch_btn.hide();                      
+            switch_btn.hide();
         }
 
         private void switch_mode () {
@@ -156,9 +155,9 @@ namespace Pi{
                 switch_btn = new ToolButton (new Image.from_icon_name("format-justify-fill", IconSize.BUTTON), "");
             }
             else {
-                switch_btn = new ToolButton (new Image.from_icon_name("document-page-setup", IconSize.BUTTON), "");                              
-            }     
-            mode = !mode;                    
+                switch_btn = new ToolButton (new Image.from_icon_name("document-page-setup", IconSize.BUTTON), "");
+            }
+            mode = !mode;
         }
     }
 }

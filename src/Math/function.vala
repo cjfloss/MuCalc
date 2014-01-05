@@ -10,12 +10,13 @@ namespace Pi.Math {
         // the index one is the sign index, variables at 0 are positive, at 1 are negative
         // second index is the power, the third one is the actual variable one.
 
-        Gee.ArrayList<Variable> right_list = new Gee.ArrayList<Variable>();
-        Gee.ArrayList<Variable> left_list = new Gee.ArrayList<Variable>();
+        public Expression right_expression;
+        public Expression left_expression;
         public Color color;
         public static int color_int;
-        public static string[] color_set = {"red", "blue", "green", "yellow",
-                                            "orange", "pink", "purple"};
+        public static string[] color_set = {"red", "blue", "green", "yellow","orange", "pink", "purple"};
+
+
         public Function(string f)
         {
             double r = Random.double_range(0.1,0.95);
@@ -25,7 +26,7 @@ namespace Pi.Math {
             color = new Color(r,g,b,a);
 
             originalFunction = f;
-            parse_terms(); // get the variables in the function
+            parse_function(); // get the variables in the function
         }
 
         public string solve_for(char letter)
@@ -33,79 +34,33 @@ namespace Pi.Math {
             return "";
         }
 
+
+        public void parse_function()
+        {
+         string[] f = originalFunction.split_set("=");
+         stdout.printf("Parsing function \"" + originalFunction + "\" \n");
+         // split at the place where we have an equal sign
+            stdout.printf("Assigned left expression to \"" + f[0] + "\" \n");
+            left_expression = new Expression(f[0]);
+            stdout.printf("Assigned right expression to \"" + f[1] + "\" \n");
+            right_expression = new Expression(f[1]);
+        }
+
         public double evaluate_when(char letter, double number)
         {
             //only evaluates values on the right
             //TODO: complete solving mechanism
-
+            if (number.to_string().char_count() > 5)
+            {
+            stdout.printf("\x1b[32m" + "evaluating function \"\x1b[33m" +
+                                     originalFunction + "\x1b[32m\"for when \"\x1b[33m" +
+                                     letter.to_string() + "\"\x1b[32m is \"\x1b[33m" + number.to_string() +
+                                      "\x1b[32m\" \n\x1b[0m");
+                                      }
             double result = 0;
-            double answer = 0;
-            solve_for(letter);
-            for (int i = 0; i < right_list.to_array().length; i++) {
-                    answer = GLib.Math.pow(number, double.parse(right_list[i].power));
-                
-                if (right_list[i].is_negative) {
-                    result = result - answer;
-                }
-                else {
-                    result = result + answer;
-                }
-            }
+            //solve_for(letter);
+            result = right_expression.evaluate_when(letter, number);
             return result;
-        }
-
-
-
-
-
-        public void parse_terms()
-        {
-            bool left_side = true;
-            string f = originalFunction;
-            int var_index = 0;
-            for (int i = 0; i < f.char_count(); i++) {
-                if (f.get_char(i) == '=')
-                {
-                    left_side = false;
-                }
-                if (f.get_char(i).to_string() in GLib.CharacterSet.a_2_z || f.get_char(i).to_string() in GLib.CharacterSet.A_2_Z)
-                {
-                    char sind = '+'; // sign
-                    string pind = "1"; // power
-
-                    if (f.get_char(i-1) == '-') // check if the variable is negative
-                    {
-                        sind = '-';
-                    }
-                    if (f.get_char(i+1) == '^') {
-                        if (f.get_char(i+2) == '(') {
-                            string contents = "";
-                            int ii = 1;
-                            while(f.get_char(i+ii) != ')')
-                            {
-                                contents = contents + f.get_char(i+ii).to_string();
-                                ii++;
-                            }
-                            pind = contents;
-                        }
-                        else {
-                            pind = f.get_char(i+2).to_string();
-                        }
-                    }
-                    try {
-                        Variable v = new Variable.with_letter(sind, f.get_char(i), pind);
-                        if(left_side)
-                        {
-                            left_list.add(v);
-                        }
-                        else {
-                            right_list.add(v);
-                        }
-                    } catch (VariableError e) {
-                        stdout.printf("variable error");
-                    }
-                }
-            }
         }
 
     }

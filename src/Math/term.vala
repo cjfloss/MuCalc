@@ -12,39 +12,45 @@ namespace Pi.Math {
         public string string_term;
         private string _function;
         public bool has_a_function = false;
-
+	public bool is_numeric = false;
 
         //TODO Parsing, Coefficients...
         //
         public Term(string term, unichar si = '+') {
             original_term = term;
             sign = si;
-            string_term = "";
-            //if our term is just a number
+                      //if our term is just a number
             if(Math.is_valid_number(term))
             {
-
+		is_numeric = true;
+		stdout.printf("--new numeric term \"" + original_term + "\" created \n");
+                vars = new Variable[1];
+                //assume power is one
+                vars[0] = new Variable.with_number('+', double.parse(term), "1"); // assume its positive
             }
             else{
-                coefficient = Math.extract_coefficient(out string_term, true);
+		stdout.printf("--new term \"" + original_term + "\" created \n");
+                coefficient = Math.extract_num_coefficient(original_term);
+                string_term = original_term.replace(coefficient.to_string(), "");
                 parse_term();
             }
 
         }
 
-
         public double evaluate_when(unichar vari, double value)
         {
             double result = 0;
+	    if(is_numeric) // if our term is just a number
+	     {
+		return vars[0].evaluate_when(vari, value);
+	     }
             foreach (Variable v in vars) {
-                if (vari == v.letter) {
-
-                }
-                result = result + v.evaluate_when(value);
+                result += result + v.evaluate_when(vari, value);
+		stdout.printf("\x1b[36mVariable \"\x1b[33m" + v.to_string() + "\x1b[36m\" returned the value \"\x1b[33m" + v.evaluate_when(vari, value).to_string() + "\x1b[36m\" \x1b[0m\n");
             }
 
             foreach (Expression expr in exprs) {
-                result = result + expr.evaluate_when(vari, value);
+                result += expr.evaluate_when(vari, value);
             }
 
             if (has_a_function) {
@@ -67,35 +73,20 @@ namespace Pi.Math {
         {
             char si;
             Gee.ArrayList<Variable> variables = new Gee.ArrayList<Variable>();
-            Gee.ArrayList<Term> terms = new Gee.ArrayList<Term>();
             Gee.ArrayList<Expression> expressions = new Gee.ArrayList<Expression>();
-            for (int i = 0; i < original_term.char_count(); i++) {
-                if (original_term.get_char(i) == '(') {
-                    int iii = 1;
-                    int ii = 0;
-                    string contents = "";
-                    while (original_term.get_char(ii) != ')' && iii != 0) {
-
-                        if (original_term.get_char(ii) == ')')
-                        {
-                            iii = iii - 1;
-                        }
-                        else if (original_term.get_char(ii) == '(') {
-                            iii = iii + 1;
-                        }
-                        ii++;
-                    }
-                    contents = original_term.substring(i,ii);
-                    if (Expression.is_expression(contents)) {
-                        expressions.add(new Expression(contents));
-                    }
-                    else {
-                        terms.add(new Term(contents));
-                    }
+            if(string_term.contains("("))
+            {
+                //deal with expressions and powers
+            }else
+            {
+                //we just have variables
+                foreach (char ch in string_term.to_utf8())
+                {
+                // ASSUME POWER IS ONE
+                    variables.add(new Variable.with_letter('+', ch, "1"));
                 }
-
             }
-
+           vars = variables.to_array();
         } // method ender
     }
 }

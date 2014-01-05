@@ -62,7 +62,7 @@ namespace Pi.Math {
               for (double i = 0; i < width; i++)
               {
                   cr.set_source_rgb(f.color.R, f.color.G, f.color.B);
-                  graph_point(i, f.evaluate_when('i', to_coord_x(i)), cr);
+                  graph_point(i, f.evaluate_when('x', to_coord_x(i)), cr);
               }
         }
 

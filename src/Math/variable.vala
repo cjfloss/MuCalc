@@ -4,32 +4,25 @@ namespace Pi.Math {
     public class Variable : GLib.Object{
         private string _power;
         private Expression _expression_power;
-        private Term _term_power;
         private char _sign;
         private unichar _letter;
         private double _number;
-        public double coefficient; 
         public bool is_a_number = false;
         public bool power_is_an_expression = false;
-        public bool power_is_a_term = false;
 
 
-        public Variable.with_letter(char s, unichar l, string p, double c = 1) throws VariableError
+        public Variable.with_letter(char s, unichar l, string p) throws VariableError
         {
-            coefficient = c;
+            stdout.printf("new variable \"" + l.to_string() + "\" created with power of \"" + p + "\" \n");
             if (Expression.is_expression(p)) {
                 power_is_an_expression = true;
                 _expression_power = new Expression(p);
             }
-            else if (Term.is_term(p)) {
-                power_is_a_term = true;
-                _term_power = new Term(p);
-            }
             else{
                 power = p;
             }
-            
-            
+
+
             if (can_be_var(l))
             {
                 letter = l;
@@ -48,10 +41,10 @@ namespace Pi.Math {
 
 
 
-        public Variable.with_number(char s, double l, string p, double c = 1) throws VariableError
+        public Variable.with_number(char s, double l, string p) throws VariableError
         {
+            stdout.printf("new variable \"" + l.to_string() + "\" created with power of \"" + p + "\" \n");
                 number = l;
-                coefficient = c;
                 is_a_number = true;
 
             if (s.to_string() in "+ -")
@@ -67,7 +60,7 @@ namespace Pi.Math {
         public string power {
 
             get { return _power; }
-            set { _power = value; }    
+            set { _power = value; }
             default = "1";
         }
 
@@ -76,22 +69,22 @@ namespace Pi.Math {
             get { return _sign; }
             set { _sign = value; }
             default = '+';
-                
+
         }
 
         public unichar letter {
 
             get { return _letter; }
             set { _letter = value; }
-            default = 'x';    
+            default = 'x';
         }
 
         public double number {
 
             get { return _number; }
             set { _number = value; }
-            default = 0;    
-        }                            
+            default = 0;
+        }
 
         public static bool can_be_var(unichar value)
         {
@@ -111,7 +104,7 @@ namespace Pi.Math {
 
             return true;
         }
-        
+
         public static bool is_numeric(string value)
         {
             try {
@@ -141,60 +134,41 @@ namespace Pi.Math {
             }else if (this == null) {
                 return false;
             }
-            
+
             return false;
         }
         }
 
-        public double evaluate_when(double value)
+        public double evaluate_when(unichar vari, double val)
         {
-            double result;
-            double pwr;
-            if (power_is_a_term) {
-                if (is_a_number) {
-                    pwr = _term_power.evaluate_when('x', value);                    
-                }
-                else
-                {
-                    pwr = _term_power.evaluate_when(letter, value);
-                }
-            }
-            else if (power_is_an_expression) {
-                if (is_a_number) {
-                    pwr = _expression_power.evaluate_when('x', value);                    
-                }
-                else
-                {
-                    pwr = _expression_power.evaluate_when(letter, value);
-                }                
-            }
-            else
+            double pwr = 0;
+            double result = 0;
+            if(power_is_an_expression)
             {
+                var exp = new Expression(power);
+                pwr = exp.evaluate_when(vari, val);
+            }
+            else{
                 pwr = double.parse(power);
             }
+            if (is_a_number)
+            {
+                result = GLib.Math.pow(number ,pwr);
+            }
+            else if (vari == letter){
+                result = GLib.Math.pow(val ,pwr);
+            }
+            else{
             
-            if (is_a_number) {
-                result = GLib.Math.pow(number, pwr);
-                if (is_negative) {
-                    result = 0 - result;
-                }
-                    return result*coefficient;                
             }
-            else {
-                result = GLib.Math.pow(value, pwr);
-                if (is_negative) {
-                    result = 0 - result;
-                    return result*coefficient;
-                }    
-            return result*coefficient;                            
-            }
+            return result;
         }
 
         public string to_string()
         {
             string result = "";
             if (is_a_number) {
-            result = sign.to_string() + number.to_string() + "^(" + power + ")";                
+            result = sign.to_string() + number.to_string() + "^(" + power + ")";
             }
             result = sign.to_string() + letter.to_string() + "^(" + power + ")";
             return (result);
@@ -207,5 +181,5 @@ namespace Pi.Math {
         SIGN_ERROR,
         LETTER_ERROR
     }
-  
+
 }

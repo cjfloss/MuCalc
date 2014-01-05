@@ -56,23 +56,28 @@ namespace Pi.Math {
     {
         string nn;//new string
 
-        //get rid of signs if we have them
-        if (n.get_char(0) == '+' || n.get_char(0) == '-') {
+        //get rid of signs and points and spaces if we have them
+        if (n.get_char(0) == '+' || n.get_char(0) == '-' ||  n.get_char(0) == '.' ||  n.get_char(0) == ' ') {
             nn = n.substring(1, n.char_count());
         }
         else
         {
          nn=n;
         }
+        //check if we have digits
+        foreach (char ch in nn.to_utf8())
+        {
+            if(GLib.CharacterSet.DIGITS.contains(ch.to_string()))
+            {
 
-
-        try {
-            double.parse(n); // try to parse it
-            return true; // we parsed it, its a number
-        } catch (Error e) {
-
+            }
+            else
+            {
+                return false; //found a non number, this is not a number
+            }
         }
-        return false; // didnt parse it, its not a number
+
+        return true; // if it got here, its a number
     }
 
 
@@ -81,28 +86,59 @@ namespace Pi.Math {
     * @param [bool remove] [Remove the coefficient from the passed string]
     * @return [The coefficient of the passed string]
     */
-    public double extract_coefficient(out string s, bool remove)
+    public double extract_num_coefficient(string s)
     {
-        //get coefficients if they exist
-        double c = 1;
-        int i = 0; // index
-        while(Math.is_valid_number(s.substring(0,i))) // while we have numbers keep going on
+        
+	stdout.printf("\x1b[35m" + "extracting a coefficient from string \"\x1b[33m" + s + "\x1b[35m\" \n");
+        if(is_valid_number(s))
         {
-          i++; // increase the index
+          stdout.printf("--extracted \"\x1b[33m1\x1b[35m\" \x1b[0m\n ");
+	  return 1; // if we are passed a number, the coefficient will be one, dont parse anything
         }
+	if(Expression.is_numeric_expression(s))
+	{
+	 return 1;
+	}
 
-        if (Math.is_valid_number(s.get_char(0).to_string())) { //if first char isnt number
-            c = 1; // our coefficient is one
-        }
-        else {
-            c = double.parse(s.substring(0,i-1)); //i-1 so we dont grab last char, it is not part of the coefficient
-        }
-        if(remove) // the user asked to remove the coefficient
+	//get coefficients if they exist
+        double c = 1.0;
+        int i = 0; // index
+
+        string coef; // coef (used if we have an expression)
+        int fi; // first index (used if we have an expression)
+        //check if we are parsing an expression or term
+        stdout.printf("--checking parenthesis \n");
+        if (s != null && s.has_suffix(")")) // if our string ends with a parenthesis
         {
-            string returned = s.substring(i, s.char_count()); //remove the coefficient
-            s = returned; // assign the new string to the passed paramater
-        }
-        return c; // return the c value
-    }
+           stdout.printf("--found paranthesis, we are checking an expression \n");
+           fi = s.index_of_char('(', 0); // find when we first open paranthesis
+           coef = s.substring(0, fi); // get the coefficients
+           if(s.substring(0, fi).length > 0) // if coef exist
+           {
+             c = double.parse(coef);
+           }
+         }
+         else{
+            stdout.printf("--keep looking for numbers. \n");
+            while(Math.is_valid_number(s.substring(0,i))) // while we have numbers keep going on
+            {
+              i++; // increase the index
+            }
+
+            if (!Math.is_valid_number(s.get_char(0).to_string())) { //if first char isnt number
+                stdout.printf("--if we didn't find any coefficients, default to 1.' \n");
+                c = 1; // our coefficient is one
+            }
+            else {
+                c = double.parse(s.substring(0,i-1)); //i-1 so we dont grab last char, it is not part of the coefficient
+                if (i-1 == 0)
+                {
+                    c = 1; // deal with one digit variables or numbers
+                }
+            }
+            }
+            stdout.printf("--extracted \"\x1b[33m" + c.to_string() + "\x1b[35m\" \x1b[0m\n ");
+            return c; // return c
+         }
 
 }
