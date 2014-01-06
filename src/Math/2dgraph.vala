@@ -183,6 +183,7 @@ namespace Pi.Math {
         {
             functions.resize(functions.length + 1);
             functions[functions.length - 1] = new Function(f);
+//	    draw(this.get_style_context);
         }
     }
 }

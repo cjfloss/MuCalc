@@ -119,7 +119,7 @@ namespace Pi.Math {
         int fi; // first index (used if we have an expression)
         //check if we are parsing an expression or term
         stdout.printf("--checking parenthesis \n");
-        if (s != null && s.has_suffix(")")) // if our string ends with a parenthesis
+        if (s != null && s.has_suffix(")") && !s.contains("^(")) // if our string ends with a parenthesis
         {
            stdout.printf("--found paranthesis, we are checking an expression \n");
            fi = s.index_of_char('(', 0); // find when we first open paranthesis
@@ -146,6 +146,10 @@ namespace Pi.Math {
                 {
                     c = 1; // deal with one digit variables or numbers
                 }
+		if (s.has_prefix(c.to_string() + "^"))
+		{
+		   c = 1; // its raised to a power so its variable not coef
+		}
             }
             }
             stdout.printf("--extracted \"\x1b[33m" + c.to_string() + "\x1b[35m\" \x1b[0m\n ");

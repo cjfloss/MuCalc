@@ -42,7 +42,6 @@ vala_precompile(VALA_C
 	src/Math/expression.vala
 	src/Math/term.vala
 	src/Math/math.vala
-
 PACKAGES
 	granite
 OPTIONS

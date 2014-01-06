@@ -15,6 +15,8 @@ namespace Pi{
         ToolButton switch_btn;
         ToolButton zoom_out;
         ToolButton zoom_in;
+	ToolItem text_item_box;
+	Entry textbox;
         Box mainBox = new Box (Orientation.VERTICAL, 0);
         Box verticalBox = new Gtk.Box (Orientation.VERTICAL, 0);
         ThinPaned main_hpaned = new ThinPaned ();
@@ -77,7 +79,7 @@ namespace Pi{
             var expander = new ToolItem ();
             graph = new 2DGraph(2DGraph.CARTESIAN);
             expander.set_expand (true);
-
+	    text_item_box = new ToolItem();
             //Welcome Screen
             Welcome welcome_scr = new Welcome("Welcome to π", "choose your next step...");
             welcome_scr.append_with_image(new Image.from_icon_name("document-page-setup", IconSize.BUTTON),
@@ -93,6 +95,7 @@ namespace Pi{
                     if (i == 0){
                         mainBox.remove(welcome_scr);
                         mainBox.pack_start(graph, true);
+			text_item_box.show();
                         mainBox.show_all();
                     }
                     else if (i == 1) {
@@ -109,11 +112,21 @@ namespace Pi{
             toolbar.insert (zoom_in, 2);
             toolbar.insert (zoom_out, 3) ;
             toolbar.insert (expander, 4);
-
+	    toolbar.insert (text_item_box, 5);
+	    textbox = new Entry();
+       	    textbox.set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, "list-add");
+		textbox.icon_press.connect ((pos, event) => {
+		if (pos == Gtk.EntryIconPosition.SECONDARY) {
+			graph.add_function(textbox.get_text());
+			window.show_all();
+		}
+	    });
+	    text_item_box.add(textbox);
+	    text_item_box.hide();
                // deal with gui later
                 switch_btn = new ToolButton (new Image.from_icon_name("format-justify-fill", IconSize.BUTTON), "");
-            toolbar.insert (switch_btn, 5);
-            toolbar.insert (appmenu, 6);
+            toolbar.insert (switch_btn, 6);
+            toolbar.insert (appmenu, 7);
             toolbar.get_style_context ().add_class ("primary-toolbar");
 
             zoom_in.clicked.connect ( () => {
@@ -133,8 +146,6 @@ namespace Pi{
             switch_btn.clicked.connect ( () => {
                 this.switch_mode();
             });
-
-            graph.add_function("y=x^(2)"); 
             zoom_out.hide();
             zoom_in.hide();
             switch_btn.hide();
@@ -143,6 +154,7 @@ namespace Pi{
             window.add (mainBox);
             mainBox.show_all();
             window.show_all ();
+	    textbox.show();
             switch_mode();
             zoom_out.hide();
             zoom_in.hide();

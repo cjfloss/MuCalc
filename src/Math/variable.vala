@@ -14,14 +14,15 @@ namespace Pi.Math {
         public Variable.with_letter(char s, unichar l, string p) throws VariableError
         {
             stdout.printf("new variable \"" + l.to_string() + "\" created with power of \"" + p + "\" \n");
-            if (Expression.is_expression(p)) {
-                power_is_an_expression = true;
-                _expression_power = new Expression(p);
-            }
-            else{
-                power = p;
-            }
-
+	    if(Math.is_valid_number(p))
+ 	    {
+	     _power = p;
+	    }
+	    else
+	    {
+	     power_is_an_expression = true;
+	     _expression_power = new Expression(p);
+	    }
 
             if (can_be_var(l))
             {
@@ -54,7 +55,17 @@ namespace Pi.Math {
             else {
                 throw new VariableError.SIGN_ERROR("The sign is either + or -");
             }
-            power = p;
+             if(Math.is_valid_number(p))
+ 	    {
+	     _power = p;
+	    }
+	    else
+	    {
+	     power_is_an_expression = true;
+	     _expression_power = new Expression(p);
+	    }
+
+
         }
 
         public string power {

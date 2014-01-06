@@ -74,9 +74,42 @@ namespace Pi.Math {
             char si;
             Gee.ArrayList<Variable> variables = new Gee.ArrayList<Variable>();
             Gee.ArrayList<Expression> expressions = new Gee.ArrayList<Expression>();
+	    char[] array = string_term.to_utf8();
             if(string_term.contains("("))
             {
-                //deal with expressions and powers
+                //deal with powers
+		for (int i = 0; i < array.length; i++)// for each char in our arrray
+		{
+		    int ii = 3;
+	 	    int depth = 1;
+		    string power_string = "";
+		 if(array[i+1] == '^' && array[i+2] == '(') // if we found the power symbol with a bracket
+		  {
+		    while (array[i+ii]!=')' && depth != 0) // go on until we hit a close mracket
+			{
+			  if(array[i+ii] == '(')
+			   {
+			    depth++;
+			   }
+			  if(array[i+ii] == ')')
+			   {
+			    depth--;
+                }
+			  power_string = power_string + array[i+ii].to_string();
+			  ii++;
+			}
+			variables.add(new Variable.with_letter('+', array[i], power_string)); // new var with power
+		  }
+		 else
+		  {
+			// its a normal variable with no power
+			variables.add(new Variable.with_letter('+', array[i], "1")); //assume power is one
+		  }
+		  i = i+ii+1;
+		  ii = 3;
+		  depth = 1;
+		  power_string = "";
+		}
             }else
             {
                 //we just have variables

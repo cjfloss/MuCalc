@@ -17,7 +17,7 @@ namespace Pi.Math {
             string_expression = original_expression;
             stdout.printf("--new expression \"" + string_expression + "\" created \n");
             coefficient = Math.extract_num_coefficient(string_expression);
-	    if (coefficient!=1)
+	    if (coefficient!=1 && string_expression.has_prefix(coefficient.to_string() + "("))
             {
 		string_expression = Math.replace_first(string_expression,coefficient.to_string(), "");
 	    }
