@@ -19,7 +19,7 @@ namespace Pi{
 	Entry textbox;
         Box mainBox = new Box (Orientation.VERTICAL, 0);
         Box verticalBox = new Gtk.Box (Orientation.VERTICAL, 0);
-        ThinPaned main_hpaned = new ThinPaned ();
+        Gtk.Paned main_hpaned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
         Welcome welcome_scr;
         public Main(){
             this.set_flags (ApplicationFlags.HANDLES_OPEN);
@@ -69,7 +69,6 @@ namespace Pi{
 
             //The uppermost layout (Toolbar + Rest)
             var menu = new Gtk.Menu ();
-            var appmenu   = this.create_appmenu (menu);
             toolbar   = new Toolbar ();
             var backward    = new ToolButton (new Image.from_icon_name ("go-previous", IconSize.BUTTON), "");
             var forward   = new ToolButton (new Image.from_icon_name ("go-next", IconSize.BUTTON), "");
@@ -126,7 +125,6 @@ namespace Pi{
                // deal with gui later
                 switch_btn = new ToolButton (new Image.from_icon_name("format-justify-fill", IconSize.BUTTON), "");
             toolbar.insert (switch_btn, 6);
-            toolbar.insert (appmenu, 7);
             toolbar.get_style_context ().add_class ("primary-toolbar");
 
             zoom_in.clicked.connect ( () => {

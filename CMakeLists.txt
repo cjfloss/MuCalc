@@ -12,7 +12,7 @@ set (GETTEXT_PACKAGE "pi_calculator")
 set (RELEASE_NAME "Pi")
 set (VERSION "0.1")
 set (VERSION_INFO "Release")
-set (CMAKE_C_FLAGS "-ggdb")
+set (CMAKE_C_FLAGS "-ggdb -lm")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
 
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
